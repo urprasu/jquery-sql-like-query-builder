@@ -2,14 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Drachenfels">
+    <meta name="robots" content="noindex,nofollow">
+
+    <link rel="icon" href="static/favicon.ico">
+
     <title>Condition builder</title>
+
     <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
 </head>
 <body>
-    <h2>SQL-like query builder</h2>
-    <div id="advanced_search"></div>
-    <button id="btnCondition">Get Condition</button>
-    <button id="btnQuery">Get Query</button>
+    <div class="container-fluid">
+        <div class="col-sm-3 col-md-2 sidebar"></div>
+        <div class="col-sm-10 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h2>SQL-like query builder</h2>
+
+            <div id="advanced_search"></div>
+
+            <p>
+                <a href="/article/create/" class="btn wi-btn">
+                    <span class="glyphicon glyphicon-pencil"></span> Create
+                </a>
+            </p>
+
+            <div class="well well-sm">
+                <input name="q" type="text" class="form-control" placeholder="Search...">
+            </div>
+
+            <p>
+            <button id="btnCondition">Get Condition</button>
+            <button id="btnQuery">Get Query</button>
+            </p>
+
+        </div>
+    </div>
 
     <div id="template-subquery" style="display: none">
         <table class="js-subquery">
@@ -187,3 +216,5 @@
     </script>
 </body>
 </html>
+
+
