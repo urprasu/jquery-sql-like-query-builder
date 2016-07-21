@@ -13,20 +13,18 @@
     <title>Condition builder</title>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 </head>
 <body>
     <div class="container-fluid">
-        <div class="col-sm-3 col-md-2 sidebar">&nbsp;</div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-12 col-md-12 main">
             <h2>SQL-like query builder</h2>
 
-
             <div class="well well-sm">
-                <div id="advanced_search"></div>
+                <div class="container js-query-root"></div>
             </div>
 
             <p>
@@ -37,72 +35,81 @@
         </div>
     </div>
 
-    <div id="template-subquery" style="display: none">
-        <table class="js-subquery">
-        <tr>
-            <td class="separator">
-                <button class="btn js-remove_subquery"><span class="glyphicon glyphicon-minus"></span> Remove subquery</button>
-                <select class="small">
-                    <option value="and">And</option>
-                    <option value="or">Or</option>
-                </select>
-                <p>
-                    <button class="btn js-add"><span class="glyphicon glyphicon-add"></span> Add</button>
-                    <button class="btn js-add_subquery"><span class="glyphicon glyphicon-add"></span> Add subquery</button>
-                </p>
-            </td>
-            <td class="query"></td>
-        </tr>
-        </table>
-    </div>
-
-    <div id="template-query" style="display: none">
-        <div class="js-query">
-            <button class="btn js-remove"><span class="glyphicon glyphicon-minus"></span> Remove</button>
-            <select class="col small">
-                <option value="code">Code</option>
-                <option value="country">Country</option>
-                <option value="capital">Capital</option>
-                <option value="govt">Government</option>
-                <option value="cont">Continent</option>
-                <option value="national">Nationalhood</option>
-                <option value="area">Area(km2)</option>
-                <option value="pop">Population</option>
-                <option value="gdp">GDP($M)</option>
-                <option value="g8">G8</option>
-            </select>
-            <select class="op small">
-                <option value="contains">contains</option>
-                <option value="startswith">starts with</option>
-                <option value="endswith">ends with</option>
-                <option value="doesnotcontain">does not contain</option>
-                <option value="doesnotstartwith">does not start with</option>
-                <option value="national">does not end with</option>
-                <option value="area">equals</option>
-                <option value="pop">not equal</option>
-                <option value="gdp">less than</option>
-                <option value="g8">greater than</option>
-                <option value="g8">less than or equal to</option>
-                <option value="g8">greater than or equal to</option>
-                <option value="g8">between</option>
-                <option value="g8">is null</option>
-                <option value="g8">is not null</option>
-                <option value="g8">matches other field</option>
-                <option value="g8">differs from field</option>
-            </select>
-            <input type="text">
+    <div id="template-subquery" style="display: none;">
+        <div class="row js-sub-query">
+            <div class="col-sm-3 js-sub-query-menu">
+                <div class="row">
+                    <ul class="nav nav-pills">
+                        <li><button class="btn btn-danger js-remove-subquery"><span class="glyphicon glyphicon-remove"></span></button></li>
+                        <li>
+                            <select class="form-control">
+                                <option value="and">And</option>
+                                <option value="or">Or</option>
+                            </select>
+                        </li>
+                        <li><button class="btn btn-success js-add"><span class="glyphicon glyphicon-plus"></span> </button></li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <ul class="nav nav-pills">
+                        <li><button class="btn btn-warning js-add-subquery">New Subquery</button></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-9 js-sub-query-content"></div>
         </div>
     </div>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <div id="template-query" style="display: none;">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-pills">
+                    <li><button class="btn btn-danger js-remove"><span class="glyphicon glyphicon-remove"></span></button></li>
+                    <li>
+                        <select class="form-control">
+                            <option value="code">Code</option>
+                            <option value="country">Country</option>
+                            <option value="capital">Capital</option>
+                            <option value="govt">Government</option>
+                            <option value="cont">Continent</option>
+                            <option value="national">Nationalhood</option>
+                            <option value="area">Area(km2)</option>
+                            <option value="pop">Population</option>
+                            <option value="gdp">GDP($M)</option>
+                            <option value="g8">G8</option>
+                        </select>
+                    </li>
+                    <li>
+                        <select class="form-control">
+                            <option value="contains">contains</option>
+                            <option value="startswith">starts with</option>
+                            <option value="endswith">ends with</option>
+                            <option value="doesnotcontain">does not contain</option>
+                            <option value="doesnotstartwith">does not start with</option>
+                            <option value="national">does not end with</option>
+                            <option value="area">equals</option>
+                            <option value="pop">not equal</option>
+                            <option value="gdp">less than</option>
+                            <option value="g8">greater than</option>
+                            <option value="g8">less than or equal to</option>
+                            <option value="g8">greater than or equal to</option>
+                            <option value="g8">between</option>
+                            <option value="g8">is null</option>
+                            <option value="g8">is not null</option>
+                            <option value="g8">matches other field</option>
+                            <option value="g8">differs from field</option>
+                        </select>
+                    </li>
+                    <li><input type="text" class="form-control"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="static/sql-query.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $(document).trigger('initialize_advanced_search', '#advanced_search')
-    })
-    </script>
 </body>
 </html>
 

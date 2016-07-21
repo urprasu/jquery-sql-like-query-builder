@@ -1,63 +1,26 @@
 $(document).ready(function() {
-    var template_subquery = $('#template-subquery').html(),
-        template_query = $('#template-query').html()
+    function addQuery(el) {
+        var template_query = $('#template-query').html()
 
-    $(document).bind('initialize_advanced_search', function(e, el) {
-        $(el).on('click', '.js-add', function(e) {
-            addQuery($(this).parents('.js-subquery').first().find('.query').first(), false)
+        $(el).parents('.js-sub-query').first().find('.js-sub-query-content').append(template_query)
+    }
 
-            e.preventDefault()
-            e.stopPropagation()
-        })
+    function addSubQuery(el) {
+        var template_subquery = $('#template-subquery').html()
 
-        $(el).on('click', '.js-add_subquery', function(e) {
-            addQuery($(this).parents('.js-subquery').first().find('.query').first(), true)
+        $(el).parents('.js-sub-query').first().find('.js-sub-query-content').append(template_subquery)
 
-            e.preventDefault()
-            e.stopPropagation()
-        })
-
-        $(el).on('click', '.js-remove', function(e) {
-            removeQuery($(this).parent())
-
-            e.preventDefault()
-            e.stopPropagation()
-        })
-
-        $(el).on('click', '.js-remove_subquery', function(e) {
-            removeQuery($(this).parents('.js-subquery').first())
-
-            e.preventDefault()
-            e.stopPropagation()
-        })
-
-        $('body').on('click', '#btnCondition', function() {
-            var query = getCondition($(el).find('table.js-subquery').first())
-            alert(JSON.stringify(query))
-            console.log(query)
-        })
-
-        $('body').on('click', '#btnQuery', function() {
-            var con = getQuery(getCondition($(el).find('table.js-subquery').first()))
-            alert(con)
-            console.log(con)
-        })
-
-        addQuery(el, true)
-    })
-
-    function addQuery(el, subquery) {
-        if (subquery) {
-            $(el).append(template_subquery)
-            $(el).find('.js-add').last().trigger('click')
-        } else {
-            $(el).append(template_query)
-        }
+        // $(el).find('.js-add').last().trigger('click')
     }
 
     function removeQuery(el) {
-        $(el).remove()
+        $(el).parents('.js-query').first().remove()
     }
+
+    function removeSubQuery(el) {
+        $(el).parents('.js-sub-query').first().remove()
+    }
+
 
     function getCondition(el) {
         var q = {},
@@ -105,4 +68,48 @@ $(document).ready(function() {
             .replace('{1}', expression[1])
             .replace('{2}', expression[2])
     }
+
+    $('body').on('click', '.js-add', function(e) {
+        addQuery($(this))
+
+        e.preventDefault()
+        e.stopPropagation()
+    })
+
+    $('body').on('click', '.js-add-subquery', function(e) {
+        addSubQuery($(this))
+
+        e.preventDefault()
+        e.stopPropagation()
+    })
+
+    $('body').on('click', '.js-remove', function(e) {
+        removeQuery($(this))
+
+        e.preventDefault()
+        e.stopPropagation()
+    })
+
+    $('body').on('click', '.js-remove-subquery', function(e) {
+        removeSubQuery($(this))
+
+        e.preventDefault()
+        e.stopPropagation()
+    })
+
+    $('body').on('click', '#btnCondition', function() {
+        var query = getCondition($(el).find('table.js-subquery').first())
+        alert(JSON.stringify(query))
+        console.log(query)
+    })
+
+    $('body').on('click', '#btnQuery', function() {
+        var con = getQuery(getCondition($(el).find('table.js-subquery').first()))
+        alert(con)
+        console.log(con)
+    })
+
+    var template_subquery = $('#template-subquery').html()
+
+    $('.js-query-root').append(template_subquery)
 })
