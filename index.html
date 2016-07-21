@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Condition builder</title>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+</head>
+<body>
+    <h2>SQL-like query builder</h2>
+    <div id="advanced_search"></div>
+    <button id="btnCondition">Get Condition</button>
+    <button id="btnQuery">Get Query</button>
+
+    <div id="template-subquery" style="display: none">
+        <table class="js-subquery">
+        <tr>
+            <td class="separator">
+                <a href="#" class="js-remove_subquery"><img src="resource/remove.png" alt="Remove subquery"></a>
+                <select class="small">
+                    <option value="and">And</option>
+                    <option value="or">Or</option>
+                </select>
+                <p>
+                    <a href="#" class="js-add"><img src="resource/add.png" alt="Add"></a>
+                    <a href="#" class="js-add_subquery"><img src="resource/sub.png" alt="Add subquery"></a>
+                </p>
+            </td>
+            <td class="query"></td>
+        </tr>
+        </table>
+    </div>
+
+    <div id="template-query" style="display: none">
+        <div class="js-query">
+            <a href="#" class="js-remove"><img src="remove.png" alt="Remove"></a>
+            <select class="col small">
+                <option value="code">Code</option>
+                <option value="country">Country</option>
+                <option value="capital">Capital</option>
+                <option value="govt">Government</option>
+                <option value="cont">Continent</option>
+                <option value="national">Nationalhood</option>
+                <option value="area">Area(km2)</option>
+                <option value="pop">Population</option>
+                <option value="gdp">GDP($M)</option>
+                <option value="g8">G8</option>
+            </select>
+            <select class="op small">
+                <option value="contains">contains</option>
+                <option value="startswith">starts with</option>
+                <option value="endswith">ends with</option>
+                <option value="doesnotcontain">does not contain</option>
+                <option value="doesnotstartwith">does not start with</option>
+                <option value="national">does not end with</option>
+                <option value="area">equals</option>
+                <option value="pop">not equal</option>
+                <option value="gdp">less than</option>
+                <option value="g8">greater than</option>
+                <option value="g8">less than or equal to</option>
+                <option value="g8">greater than or equal to</option>
+                <option value="g8">between</option>
+                <option value="g8">is null</option>
+                <option value="g8">is not null</option>
+                <option value="g8">matches other field</option>
+                <option value="g8">differs from field</option>
+            </select>
+            <input type="text">
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var template_subquery = $('#template-subquery').html(),
+            template_query = $('#template-query').html()
+
+        $(document).bind('initialize_advanced_search', function(e, el) {
+            $(el).on('click', '.js-add', function(e) {
+                addQuery($(this).parents('.js-subquery').first().find('.query').first(), false)
+
+                e.preventDefault()
+                e.stopPropagation()
+            })
+
+            $(el).on('click', '.js-add_subquery', function(e) {
+                addQuery($(this).parents('.js-subquery').first().find('.query').first(), true)
+
+                e.preventDefault()
+                e.stopPropagation()
+            })
+
+            $(el).on('click', '.js-remove', function(e) {
+                removeQuery($(this).parent())
+
+                e.preventDefault()
+                e.stopPropagation()
+            })
+
+            $(el).on('click', '.js-remove_subquery', function(e) {
+                removeQuery($(this).parents('.js-subquery').first())
+
+                e.preventDefault()
+                e.stopPropagation()
+            })
+
+            $('body').on('click', '#btnCondition', function() {
+                var query = getCondition($(el).find('table.js-subquery').first())
+                alert(JSON.stringify(query))
+                console.log(query)
+            })
+
+            $('body').on('click', '#btnQuery', function() {
+                var con = getQuery(getCondition($(el).find('table.js-subquery').first()))
+                alert(con)
+                console.log(con)
+            })
+
+            addQuery(el, true)
+        })
+
+        function addQuery(el, subquery) {
+            if (subquery) {
+                $(el).append(template_subquery)
+                $(el).find('.js-add').last().trigger('click')
+            } else {
+                $(el).append(template_query)
+            }
+        }
+
+        function removeQuery(el) {
+            $(el).remove()
+        }
+
+        function getCondition(el) {
+            var q = {},
+                column, operator, value
+
+            q.operator = $(el).find('td.separator option:selected').first().val()
+            q.expressions = []
+
+            $(el).find('td.query').first().children().each(function(i, child) {
+                if ($(child).hasClass('js-query')) {
+                    column = $(child).find('.col :selected').text()
+                    operator = $(child).find('.op :selected').val()
+                    value = $(child).find('input').val()
+                    q.expressions.push([column, operator, value])
+                } else {
+                    q.expressions.push(getCondition($(child)))
+                }
+            })
+
+            return q
+        }
+
+        function getQuery(condition) {
+            var query = '',
+                tmp = [], i
+
+            if (condition.expressions.length == 1) {
+                return buildExpression(condition.expressions[0])
+            } else {
+                for (i = 0 ; i < condition.expressions.length ; i++) {
+                    if (_.isArray(condition.expressions[i])) {
+                        tmp.push(buildExpression(condition.expressions[i]))
+                    } else {
+                        tmp.push(getQuery(condition.expressions[i]))
+                    }
+                }
+
+                return '(' + tmp.join(' ' + condition.operator + ' ') + ')'
+            }
+        }
+
+        function buildExpression(expression) {
+            return '("{0}" {1} "{2}")'
+                .replace('{0}', expression[0])
+                .replace('{1}', expression[1])
+                .replace('{2}', expression[2])
+        }
+    })
+    </script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $(document).trigger('initialize_advanced_search', '#advanced_search')
+    })
+    </script>
+</body>
+</html>
