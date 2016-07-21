@@ -41,14 +41,14 @@
         <table class="js-subquery">
         <tr>
             <td class="separator">
-                <a href="#" class="js-remove_subquery"><img src="resource/remove.png" alt="Remove subquery"></a>
+                <button class="btn js-remove_subquery"><span class="glyphicon glyphicon-minus"></span> Remove subquery</button>
                 <select class="small">
                     <option value="and">And</option>
                     <option value="or">Or</option>
                 </select>
                 <p>
-                    <a href="#" class="js-add"><img src="resource/add.png" alt="Add"></a>
-                    <a href="#" class="js-add_subquery"><img src="resource/sub.png" alt="Add subquery"></a>
+                    <button class="btn js-add"><span class="glyphicon glyphicon-add"></span> Add</button>
+                    <button class="btn js-add_subquery"><span class="glyphicon glyphicon-add"></span> Add subquery</button>
                 </p>
             </td>
             <td class="query"></td>
@@ -58,7 +58,7 @@
 
     <div id="template-query" style="display: none">
         <div class="js-query">
-            <a href="#" class="js-remove"><img src="remove.png" alt="Remove"></a>
+            <button class="btn js-remove"><span class="glyphicon glyphicon-minus"></span> Remove</button>
             <select class="col small">
                 <option value="code">Code</option>
                 <option value="country">Country</option>
@@ -97,116 +97,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function() {
-        var template_subquery = $('#template-subquery').html(),
-            template_query = $('#template-query').html()
-
-        $(document).bind('initialize_advanced_search', function(e, el) {
-            $(el).on('click', '.js-add', function(e) {
-                addQuery($(this).parents('.js-subquery').first().find('.query').first(), false)
-
-                e.preventDefault()
-                e.stopPropagation()
-            })
-
-            $(el).on('click', '.js-add_subquery', function(e) {
-                addQuery($(this).parents('.js-subquery').first().find('.query').first(), true)
-
-                e.preventDefault()
-                e.stopPropagation()
-            })
-
-            $(el).on('click', '.js-remove', function(e) {
-                removeQuery($(this).parent())
-
-                e.preventDefault()
-                e.stopPropagation()
-            })
-
-            $(el).on('click', '.js-remove_subquery', function(e) {
-                removeQuery($(this).parents('.js-subquery').first())
-
-                e.preventDefault()
-                e.stopPropagation()
-            })
-
-            $('body').on('click', '#btnCondition', function() {
-                var query = getCondition($(el).find('table.js-subquery').first())
-                alert(JSON.stringify(query))
-                console.log(query)
-            })
-
-            $('body').on('click', '#btnQuery', function() {
-                var con = getQuery(getCondition($(el).find('table.js-subquery').first()))
-                alert(con)
-                console.log(con)
-            })
-
-            addQuery(el, true)
-        })
-
-        function addQuery(el, subquery) {
-            if (subquery) {
-                $(el).append(template_subquery)
-                $(el).find('.js-add').last().trigger('click')
-            } else {
-                $(el).append(template_query)
-            }
-        }
-
-        function removeQuery(el) {
-            $(el).remove()
-        }
-
-        function getCondition(el) {
-            var q = {},
-                column, operator, value
-
-            q.operator = $(el).find('td.separator option:selected').first().val()
-            q.expressions = []
-
-            $(el).find('td.query').first().children().each(function(i, child) {
-                if ($(child).hasClass('js-query')) {
-                    column = $(child).find('.col :selected').text()
-                    operator = $(child).find('.op :selected').val()
-                    value = $(child).find('input').val()
-                    q.expressions.push([column, operator, value])
-                } else {
-                    q.expressions.push(getCondition($(child)))
-                }
-            })
-
-            return q
-        }
-
-        function getQuery(condition) {
-            var query = '',
-                tmp = [], i
-
-            if (condition.expressions.length == 1) {
-                return buildExpression(condition.expressions[0])
-            } else {
-                for (i = 0 ; i < condition.expressions.length ; i++) {
-                    if (_.isArray(condition.expressions[i])) {
-                        tmp.push(buildExpression(condition.expressions[i]))
-                    } else {
-                        tmp.push(getQuery(condition.expressions[i]))
-                    }
-                }
-
-                return '(' + tmp.join(' ' + condition.operator + ' ') + ')'
-            }
-        }
-
-        function buildExpression(expression) {
-            return '("{0}" {1} "{2}")'
-                .replace('{0}', expression[0])
-                .replace('{1}', expression[1])
-                .replace('{2}', expression[2])
-        }
-    })
-    </script>
+    <script src="static/sql-query.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
         $(document).trigger('initialize_advanced_search', '#advanced_search')
